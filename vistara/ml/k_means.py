@@ -6,16 +6,30 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 # importing the mall data-set
-dataset = pd.read_csv('../data_files/Mall_customers.csv')
-X = dataset.iloc[:, [3, 4]].values
-
+dataset = pd.read_csv('../../../Downloads/output.csv')
+from sklearn.preprocessing import LabelEncoder
+X = dataset.iloc[:, 1:10].values
+print X
+labelencoder_X = LabelEncoder()
+X[:, 0] = labelencoder_X.fit_transform(X[:, 0])
+X[:, 1] = labelencoder_X.fit_transform(X[:, 1])
+X[:, 2] = labelencoder_X.fit_transform(X[:, 2])
+X[:, 4] = labelencoder_X.fit_transform(X[:, 4])
+X[:, 5] = labelencoder_X.fit_transform(X[:, 5])
+X[:, 6] = labelencoder_X.fit_transform(X[:, 6])
+X[:, 7] = labelencoder_X.fit_transform(X[:, 7])
+X[:, 8] = labelencoder_X.fit_transform(X[:, 8])
+print X
+# importing the mall data-set
 # Using the Elbow method to find the optimal number of clusters
+from sklearn.cross_validation import train_test_split
+X_train, X_test = train_test_split(X, test_size=0.2, random_state=0)
 from sklearn.cluster import KMeans
 
 wcss = []
 for i in range(1, 11):
-    kmeans = KMeans(n_clusters=i, init='k-means++', max_iter=300, n_init=10, random_state=0)
-    kmeans.fit(X)
+    kmeans = KMeans(n_clusters=i+1, init='k-means++', max_iter=300, n_init=10, random_state=0)
+    kmeans.fit(X_train)
     wcss.append(kmeans.inertia_)
 
 plt.plot(range(1, 11), wcss)
@@ -23,21 +37,37 @@ plt.title('The Elbow Method')
 plt.xlabel('Number of clusters')
 plt.ylabel('WCSS')
 plt.show()
+ 
 
 # Applying k-means to the mall dataset
-kmeans = KMeans(n_clusters=5, init='k-means++', max_iter=300, n_init=10, random_state=0)
-y_kmeans = kmeans.fit_predict(X)
 
+
+from sklearn.decomposition import PCA
+import pylab as pl
+pca=PCA(n_components=2).fit(X_train)
+pca_2d=pca.transform(X_train)
+pl.figure('Reference Plot')
+pl.scatter(pca_2d[:,0],pca_2d[:,1])
+kmeans = KMeans(n_clusters=4, init='k-means++', max_iter=300, n_init=10, random_state=0)
+kmeans.fit(X_train)
+pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
+pl.show()
+y_kmeans = kmeans.fit_predict(X_test)
+pca=PCA(n_components=2).fit(X_test)
+pca_2d=pca.transform(X_test)
+pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
+
+
+#pl.scatter(pca_2d[y_kmeans==0,0],pca_2d[y_kmeans==0,1] , c = 'red')
+#pl.scatter(pca_2d[y_kmeans==1,0],pca_2d[y_kmeans==1,1] , c = 'blue')
 # Visulizing the clusters
-plt.scatter(X[y_kmeans==0, 0], X[y_kmeans==0, 1], s=100, c='red', label='Cluster 1')
-plt.scatter(X[y_kmeans==1, 0], X[y_kmeans==1, 1], s=100, c='blue', label='Cluster 2')
-plt.scatter(X[y_kmeans==2, 0], X[y_kmeans==2, 1], s=100, c='green', label='Cluster 3')
-plt.scatter(X[y_kmeans==3, 0], X[y_kmeans==3, 1], s=100, c='cyan', label='Cluster 4')
-plt.scatter(X[y_kmeans==4, 0], X[y_kmeans==4, 1], s=100, c='magenta', label='Cluster 5')
+#plt.scatter(X[y_kmeans==0, 0], X[y_kmeans==0, 3], s=0.5, c='red', label='Cluster 1')
+#plt.scatter(X[y_kmeans==1, 0], X[y_kmeans==1, 3], s=0.5, c='blue', label='Cluster 2')
 
-plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='yellow', label='Centroids')
-plt.title('Clusters of clients')
-plt.xlabel('Annual Income (k$)')
-plt.ylabel('Spending Score (1-100)')
-plt.legend()
-plt.show()
+#plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=0.5, c='yellow', label='Centroids')
+#plt.title('Clusters of clients')
+#plt.xlabel('User ID (k$)')
+#plt.ylabel('age (1-100)')
+#plt.ylim((0,100))
+#plt.legend()
+#plt.show()
