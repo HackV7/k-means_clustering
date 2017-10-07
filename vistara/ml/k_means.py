@@ -4,9 +4,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import operator
 
 # importing the mall data-set
-dataset = pd.read_csv('../../../Downloads/output.csv')
+dataset = pd.read_csv('output.csv')
 from sklearn.preprocessing import LabelEncoder
 X = dataset.iloc[:, 1:10].values
 print X
@@ -46,7 +47,7 @@ from sklearn.decomposition import PCA
 import pylab as pl
 pca=PCA(n_components=2).fit(X_train)
 pca_2d=pca.transform(X_train)
-pl.figure('Reference Plot')
+pl.figure('Trained Data predictions')
 pl.scatter(pca_2d[:,0],pca_2d[:,1])
 kmeans = KMeans(n_clusters=4, init='k-means++', max_iter=300, n_init=10, random_state=0)
 kmeans.fit(X_train)
@@ -55,7 +56,24 @@ pl.show()
 y_kmeans = kmeans.fit_predict(X_test)
 pca=PCA(n_components=2).fit(X_test)
 pca_2d=pca.transform(X_test)
+pl.figure('Test Data predictions')
 pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
+pl.show()
+
+print y_kmeans
+
+X_id = dataset.iloc[:,0].values
+
+array_users = {}
+for i in range(len(y_kmeans)):
+	array_users[X_id[i]] = y_kmeans[i]
+
+ 
+
+sorted_x = sorted(array_users.items(), key=operator.itemgetter(1))
+
+
+print sorted_x
 
 
 #pl.scatter(pca_2d[y_kmeans==0,0],pca_2d[y_kmeans==0,1] , c = 'red')
@@ -71,3 +89,57 @@ pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
 #plt.ylim((0,100))
 #plt.legend()
 #plt.show()
+
+def matching_algo(fbid , cluster , array_users):
+
+	same_cluster_users = []
+	for i,j in array_users.items():
+		if j == cluster:
+			same_cluster_users.append(i)
+
+
+	X = dataset.iloc[:, 0:10].values
+
+	users = X[:,0].tolist()
+
+	age = X[:,3].tolist()
+
+	mother_tongue = X[:,0].tolist()
+
+	school = X[:,8].tolist()
+
+	college = X[:,9].tolist()
+
+
+	index_fbid = users.index(fbid)
+	
+	score_dict = {}
+	match_score = 0
+	for i in same_cluster_users:
+		if age[users.index(i)] == int(age[index_fbid]) +1 or int(age[index_fbid]) or int(age[index_fbid] -1) :
+			match_score = match_score + 2
+
+		if mother_tongue[users.index(i)]   ==  mother_tongue[index_fbid]:
+			match_score	 = match_score + 3
+
+		if school[users.index(i)]   ==  school[index_fbid]:
+			match_score	 = match_score + 1
+		
+		if college[users.index(i)]   ==  college[index_fbid]:
+			match_score	 = match_score + 1
+
+		score_dict[i] = match_score
+		
+
+	print score_dict
+	return score_dict		
+
+
+
+matching_algo(100543,'3',array_users)
+
+
+
+
+
+
