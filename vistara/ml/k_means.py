@@ -10,7 +10,7 @@ import operator
 dataset = pd.read_csv('output.csv')
 from sklearn.preprocessing import LabelEncoder
 X = dataset.iloc[:, 1:10].values
-print X
+# print X
 labelencoder_X = LabelEncoder()
 X[:, 0] = labelencoder_X.fit_transform(X[:, 0])
 X[:, 1] = labelencoder_X.fit_transform(X[:, 1])
@@ -20,7 +20,7 @@ X[:, 5] = labelencoder_X.fit_transform(X[:, 5])
 X[:, 6] = labelencoder_X.fit_transform(X[:, 6])
 X[:, 7] = labelencoder_X.fit_transform(X[:, 7])
 X[:, 8] = labelencoder_X.fit_transform(X[:, 8])
-print X
+# print X
 # importing the mall data-set
 # Using the Elbow method to find the optimal number of clusters
 from sklearn.cross_validation import train_test_split
@@ -60,7 +60,7 @@ pl.figure('Test Data predictions')
 pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
 pl.show()
 
-print y_kmeans
+# print y_kmeans
 
 X_id = dataset.iloc[:,0].values
 
@@ -73,7 +73,7 @@ for i in range(len(y_kmeans)):
 sorted_x = sorted(array_users.items(), key=operator.itemgetter(1))
 
 
-print sorted_x
+# print sorted_x
 
 
 #pl.scatter(pca_2d[y_kmeans==0,0],pca_2d[y_kmeans==0,1] , c = 'red')
@@ -94,21 +94,24 @@ def matching_algo(fbid , cluster , array_users):
 
 	same_cluster_users = []
 	for i,j in array_users.items():
+		print i , j
 		if j == cluster:
 			same_cluster_users.append(i)
 
+	print same_cluster_users		
 
-	X = dataset.iloc[:, 0:10].values
 
-	users = X[:,0].tolist()
+	Y = dataset.iloc[:, 0].values
+
+	users = Y.tolist()
 
 	age = X[:,3].tolist()
 
 	mother_tongue = X[:,0].tolist()
 
-	school = X[:,8].tolist()
+	school = X[:,7].tolist()
 
-	college = X[:,9].tolist()
+	college = X[:,8].tolist()
 
 
 	index_fbid = users.index(fbid)
@@ -116,6 +119,7 @@ def matching_algo(fbid , cluster , array_users):
 	score_dict = {}
 	match_score = 0
 	for i in same_cluster_users:
+		match_score = 0
 		if age[users.index(i)] == int(age[index_fbid]) +1 or int(age[index_fbid]) or int(age[index_fbid] -1) :
 			match_score = match_score + 2
 
@@ -136,7 +140,7 @@ def matching_algo(fbid , cluster , array_users):
 
 
 
-matching_algo(100543,'3',array_users)
+matching_algo(100543,3,array_users)
 
 
 
