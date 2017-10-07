@@ -56,7 +56,7 @@ y_kmeans = kmeans.fit_predict(X_test)
 pca=PCA(n_components=2).fit(X_test)
 pca_2d=pca.transform(X_test)
 pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
-
+pl.show()
 
 #pl.scatter(pca_2d[y_kmeans==0,0],pca_2d[y_kmeans==0,1] , c = 'red')
 #pl.scatter(pca_2d[y_kmeans==1,0],pca_2d[y_kmeans==1,1] , c = 'blue')
@@ -71,3 +71,4 @@ pl.scatter(pca_2d[:,0],pca_2d[:,1],c=kmeans.labels_)
 #plt.ylim((0,100))
 #plt.legend()
 #plt.show()
+
