@@ -135,15 +135,49 @@ def matching_algo(fbid , cluster , array_users):
 		score_dict[i] = match_score
 		
 
-	print score_dict
-	return score_dict		
+	sorted_dict=sorted(score_dict.items(), key=lambda x:x[1])
+	print sorted_dict
+
+	sorted_dict = dict(sorted_dict)
+
+	xgreen = []
+	ygreen = []
+	xyellow = []
+	yyellow=[]
+	xblue = []
+	yblue =[]
+	for i,j in sorted_dict.items():
+
+		if j<3:
+			xblue.append(i)
+			yblue.append(j)
+
+		elif j>3 and j<5:
+			xyellow.append(i)
+			yyellow.append(j)
+
+		elif j>5:
+			xgreen.append(i)
+			ygreen.append(j)
+
+	#print xblue,yblue		
+
+
+	plt.scatter(xgreen, ygreen, s=5, c='green', label='best match')
+	plt.scatter(xblue, yblue, s=5, c='blue', label='nuetral')	
+	plt.scatter(xyellow,yyellow , s=5 , c = 'orange' , label = 'medium match')	
+	plt.ylim((0,10))
+	plt.show()
+	return sorted_dict		
+
+	
+
+
+
 
 
 
 matching_algo(100543,3,array_users)
-
-
-
-
-
-
+matching_algo(100177,1,array_users)
+matching_algo(100178,2,array_users)
+matching_algo(100189,0,array_users)
